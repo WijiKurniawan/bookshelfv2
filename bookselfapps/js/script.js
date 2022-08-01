@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function () {
     event.preventDefault();
     addbook();
   });
+  if (isStorageExist()) {
+    loadDataFromStorage();
+  }
 });
 
 function addbook() {
@@ -16,7 +19,7 @@ function addbook() {
   books.push(bookObject);
 
   document.dispatchEvent(new Event(RENDER_EVENT));
-  
+  saveData();
 }
 
 function generateId() {
@@ -112,6 +115,7 @@ function addBookToCompleted (bookId) {
  
   bookTarget.isCompleted = true;
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
 }
 
 function findBook(bookId) {
@@ -131,6 +135,7 @@ function removeBookFromCompleted(bookId) {
 
   books.splice(bookTarget, 1);
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
 }
 
 function undoBookFromCompleted(bookId) {
@@ -140,6 +145,7 @@ function undoBookFromCompleted(bookId) {
 
   bookTarget.isCompleted = false;
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
 }
 
 //buat fungsi findBookIndex
@@ -153,3 +159,10 @@ function findBookIndex(bookId) {
   return -1;
 }
 
+function saveData() {
+  if (isStorageExist()) {
+    const parsed = JSON.stringify(todos);
+    localStorage.setItem(STORAGE_KEY, parsed);
+    document.dispatchEvent(new Event(SAVED_EVENT));
+  }
+}
